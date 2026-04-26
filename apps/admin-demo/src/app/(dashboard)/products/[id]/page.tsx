@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation"
-import { getProductById } from "@shopedia/dummy-data"
+import { getProductById, getCategoryById } from "@shopedia/dummy-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { ArrowLeft, Pencil, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
   const { products } = require("@shopedia/dummy-data")
@@ -16,15 +20,28 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{product.title}</h1>
-          <p className="text-sm text-muted-foreground">{product.handle}</p>
-        </div>
-        <Link href="/products">
-          <Button variant="outline">Back</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title={product.title}
+        subtitle={product.handle}
+        actions={
+          <>
+            <Button variant="ghost" size="sm" className="gap-1.5">
+              <HelpCircle className="h-4 w-4" />
+              Help
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+            <Link href="/products/">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
@@ -33,9 +50,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <CardTitle>Images</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-4 gap-3">
                 {product.images.map((img, i) => (
-                  <img key={i} src={img} alt={`${product.title} ${i + 1}`} className="rounded-lg aspect-square object-cover" />
+                  <img key={i} src={img} alt={`${product.title} ${i + 1}`} className="rounded-lg aspect-square object-cover border" />
                 ))}
               </div>
             </CardContent>
@@ -46,34 +63,42 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <CardTitle>Description</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm leading-relaxed">{product.description}</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">{product.description}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Variants</CardTitle>
+              <CardTitle>Variants ({product.variants.length})</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {product.variants.map((variant) => (
-                  <div key={variant.id} className="flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <div className="font-medium text-sm">{variant.title}</div>
-                      <div className="text-xs text-muted-foreground font-mono">{variant.sku}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">Rp {variant.price.toLocaleString()}</div>
-                      {variant.original_price && (
-                        <div className="text-xs text-muted-foreground line-through">
-                          Rp {variant.original_price.toLocaleString()}
-                        </div>
-                      )}
-                      <div className="text-xs text-muted-foreground">Stock: {variant.inventory_quantity}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Variant</TableHead>
+                    <TableHead>SKU</TableHead>
+                    <TableHead className="text-right">Price</TableHead>
+                    <TableHead className="text-right">Stock</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {product.variants.map((variant) => (
+                    <TableRow key={variant.id}>
+                      <TableCell className="font-medium text-sm">{variant.title}</TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">{variant.sku}</TableCell>
+                      <TableCell className="text-right font-mono text-sm">
+                        <span className="font-medium">Rp {variant.price.toLocaleString()}</span>
+                        {variant.original_price && (
+                          <span className="text-xs text-muted-foreground line-through ml-2">
+                            Rp {variant.original_price.toLocaleString()}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">{variant.inventory_quantity}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>
@@ -85,20 +110,28 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="text-xs text-muted-foreground">Status</div>
-                <Badge variant={product.status === "published" ? "default" : "secondary"}>{product.status}</Badge>
+                <div className="text-xs text-muted-foreground mb-1">Status</div>
+                <StatusBadge status={product.status} />
               </div>
               <div>
-                <div className="text-xs text-muted-foreground">Tags</div>
-                <div className="flex flex-wrap gap-1 mt-1">
+                <div className="text-xs text-muted-foreground mb-1">Tags</div>
+                <div className="flex flex-wrap gap-1">
                   {product.tags.map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-muted-foreground">Created</div>
+                <div className="text-xs text-muted-foreground mb-1">Category</div>
+                <div className="text-sm">{product.category_id ? getCategoryById(product.category_id)?.name ?? product.category_id : "—"}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">Created</div>
                 <div className="text-sm">{new Date(product.created_at).toLocaleDateString("id-ID")}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">Updated</div>
+                <div className="text-sm">{new Date(product.updated_at).toLocaleDateString("id-ID")}</div>
               </div>
             </CardContent>
           </Card>

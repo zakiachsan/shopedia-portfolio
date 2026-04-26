@@ -1,21 +1,20 @@
 import { stockLevels, stockLocations, products } from "@shopedia/dummy-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { PageHeader } from "@/components/layout/page-header"
 
 export default function StockPage() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Stock Levels</h1>
-      </div>
+      <PageHeader title="Stock Levels" />
 
-      <div className="grid gap-4">
+      <div className="space-y-4">
         {stockLocations.map((location) => {
           const locationStock = stockLevels.filter((s) => s.location_id === location.id)
           return (
             <Card key={location.id}>
-              <CardHeader>
+              <CardHeader className="pb-3">
                 <CardTitle className="text-base">{location.name}</CardTitle>
                 <p className="text-xs text-muted-foreground">{location.address}</p>
               </CardHeader>
@@ -48,9 +47,9 @@ export default function StockPage() {
                           <TableCell className="text-right font-mono">{sl.incoming_quantity}</TableCell>
                           <TableCell>
                             {isLow ? (
-                              <Badge variant="destructive">Low</Badge>
+                              <StatusBadge status="low" />
                             ) : (
-                              <Badge variant="outline">OK</Badge>
+                              <StatusBadge status="ok" />
                             )}
                           </TableCell>
                         </TableRow>

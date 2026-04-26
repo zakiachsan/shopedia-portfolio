@@ -2,7 +2,9 @@ import { notFound } from "next/navigation"
 import { collections, products } from "@shopedia/dummy-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
 import Link from "next/link"
+import { ArrowLeft, Pencil, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
   const { collections } = require("@shopedia/dummy-data")
@@ -17,24 +19,37 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{collection.title}</h1>
-          <p className="text-sm text-muted-foreground">{collection.handle}</p>
-        </div>
-        <Link href="/collections">
-          <Button variant="outline">Back</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title={collection.title}
+        subtitle={collection.handle}
+        actions={
+          <>
+            <Button variant="ghost" size="sm" className="gap-1.5">
+              <HelpCircle className="h-4 w-4" />
+              Help
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+            <Link href="/collections/">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       {collection.image && (
-        <img src={collection.image} alt={collection.title} className="w-full h-48 object-cover rounded-lg" />
+        <img src={collection.image} alt={collection.title} className="w-full h-48 object-cover rounded-lg border" />
       )}
 
       {collection.description && (
         <Card>
           <CardHeader><CardTitle>Description</CardTitle></CardHeader>
-          <CardContent><p className="text-sm">{collection.description}</p></CardContent>
+          <CardContent><p className="text-sm text-muted-foreground leading-relaxed">{collection.description}</p></CardContent>
         </Card>
       )}
 
@@ -43,11 +58,11 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           <CardTitle>Products ({collectionProducts.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
             {collectionProducts.map((product) => (
-              <Link key={product.id} href={`/products/${product.id}`}>
-                <div className="rounded-lg border overflow-hidden hover:shadow-md transition-shadow">
-                  <img src={product.thumbnail} alt={product.title} className="w-full aspect-square object-cover" />
+              <Link key={product.id} href={`/products/${product.id}/`}>
+                <div className="rounded-lg border overflow-hidden hover:shadow-md transition-shadow bg-white">
+                  <img src={product.thumbnail} alt={product.title} className="w-full aspect-square object-cover border-b" />
                   <div className="p-3">
                     <div className="font-medium text-sm truncate">{product.title}</div>
                     <div className="text-xs text-muted-foreground mt-1">

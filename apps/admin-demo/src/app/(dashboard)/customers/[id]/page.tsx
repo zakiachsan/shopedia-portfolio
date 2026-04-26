@@ -2,10 +2,12 @@ import { notFound } from "next/navigation"
 import { getCustomerById, getOrdersByCustomer } from "@shopedia/dummy-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { ArrowLeft, Pencil, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
   const { customers } = require("@shopedia/dummy-data")
@@ -19,39 +21,57 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Customer Details</h1>
-        <Link href="/customers">
-          <Button variant="outline">Back</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title={`${customer.first_name} ${customer.last_name}`}
+        subtitle={customer.email}
+        actions={
+          <>
+            <Button variant="ghost" size="sm" className="gap-1.5">
+              <HelpCircle className="h-4 w-4" />
+              Help
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+            <Link href="/customers/">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center text-center">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={customer.avatar} />
-                <AvatarFallback className="text-2xl">{customer.first_name[0]}{customer.last_name[0]}</AvatarFallback>
-              </Avatar>
-              <h2 className="mt-4 text-xl font-semibold">{customer.first_name} {customer.last_name}</h2>
-              <p className="text-sm text-muted-foreground">{customer.email}</p>
-              <p className="text-sm text-muted-foreground">{customer.phone}</p>
-            </div>
-            <div className="mt-6 grid grid-cols-2 gap-4 border-t pt-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold">{customer.orders_count}</div>
-                <div className="text-xs text-muted-foreground">Orders</div>
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={customer.avatar} />
+                  <AvatarFallback className="text-2xl bg-primary/10 text-primary font-semibold">
+                    {customer.first_name[0]}{customer.last_name[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <h2 className="mt-4 text-xl font-semibold">{customer.first_name} {customer.last_name}</h2>
+                <p className="text-sm text-muted-foreground">{customer.email}</p>
+                <p className="text-sm text-muted-foreground">{customer.phone}</p>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">Rp {(customer.total_spent / 1000000).toFixed(1)}M</div>
-                <div className="text-xs text-muted-foreground">Total Spent</div>
+              <div className="mt-6 grid grid-cols-2 gap-4 border-t pt-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">{customer.orders_count}</div>
+                  <div className="text-xs text-muted-foreground">Orders</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">Rp {(customer.total_spent / 1000000).toFixed(1)}M</div>
+                  <div className="text-xs text-muted-foreground">Total Spent</div>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Addresses</CardTitle>
@@ -68,10 +88,12 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
               ))}
             </CardContent>
           </Card>
+        </div>
 
+        <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Order History</CardTitle>
+              <CardTitle>Order History ({customerOrders.length})</CardTitle>
             </CardHeader>
             <CardContent>
               {customerOrders.length === 0 ? (
@@ -90,17 +112,15 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
                     {customerOrders.map((order: any) => (
                       <TableRow key={order.id}>
                         <TableCell>
-                          <Link href={`/orders/${order.id}`} className="font-medium hover:underline">
+                          <Link href={`/orders/${order.id}/`} className="font-medium hover:text-primary transition-colors">
                             #{order.display_id}
                           </Link>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={order.status === "completed" ? "default" : order.status === "canceled" ? "destructive" : "secondary"}>
-                            {order.status}
-                          </Badge>
+                          <StatusBadge status={order.status} />
                         </TableCell>
                         <TableCell className="text-right font-mono text-sm">Rp {order.total.toLocaleString()}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
                           {new Date(order.created_at).toLocaleDateString("id-ID")}
                         </TableCell>
                       </TableRow>

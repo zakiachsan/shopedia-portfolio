@@ -1,57 +1,86 @@
 import { promotions } from "@shopedia/dummy-data"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { StatusBadge } from "@/components/ui/status-badge"
+import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
+import { DataTable } from "@/components/layout/data-table"
+import { Plus, HelpCircle } from "lucide-react"
 
 export default function PromotionsPage() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Promotions</h1>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>All Promotions ({promotions.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-right">Value</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Usage</TableHead>
-                <TableHead>Period</TableHead>
+      <PageHeader
+        title="Promotions"
+        actions={
+          <>
+            <Button variant="ghost" size="sm" className="gap-1.5">
+              <HelpCircle className="h-4 w-4" />
+              Help
+            </Button>
+            <Button variant="primary" size="sm" className="gap-1.5">
+              <Plus className="h-4 w-4" />
+              Add Promotion
+            </Button>
+          </>
+        }
+      />
+
+      <DataTable
+        title="Promotions"
+        count={promotions.length}
+        showFilters
+        showExport
+        pagination={{ pageSize: 10, total: promotions.length }}
+      >
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-10">
+                <input type="checkbox" className="rounded border-gray-300" disabled />
+              </TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead className="text-right">Value</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Usage</TableHead>
+              <TableHead>Period</TableHead>
+              <TableHead className="w-10"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {promotions.map((promo) => (
+              <TableRow key={promo.id}>
+                <TableCell>
+                  <input type="checkbox" className="rounded border-gray-300" disabled />
+                </TableCell>
+                <TableCell>
+                  <div className="font-mono text-sm font-medium">{promo.code}</div>
+                  <div className="text-xs text-muted-foreground">{promo.is_automatic ? "Automatic" : "Manual"}</div>
+                </TableCell>
+                <TableCell className="capitalize text-sm">{promo.type}</TableCell>
+                <TableCell className="text-right font-mono text-sm">
+                  {promo.type === "percentage" ? `${promo.value}%` : `Rp ${promo.value.toLocaleString()}`}
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={promo.status} />
+                </TableCell>
+                <TableCell className="text-right text-sm">
+                  {promo.usage_count} / {promo.usage_limit ?? "∞"}
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                  {promo.starts_at && new Date(promo.starts_at).toLocaleDateString("id-ID")}
+                  {promo.ends_at && ` - ${new Date(promo.ends_at).toLocaleDateString("id-ID")}`}
+                </TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <span className="text-muted-foreground">⋯</span>
+                  </Button>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {promotions.map((promo) => (
-                <TableRow key={promo.id}>
-                  <TableCell>
-                    <div className="font-medium font-mono">{promo.code}</div>
-                    <div className="text-xs text-muted-foreground">{promo.is_automatic ? "Automatic" : "Manual"}</div>
-                  </TableCell>
-                  <TableCell className="capitalize">{promo.type}</TableCell>
-                  <TableCell className="text-right">
-                    {promo.type === "percentage" ? `${promo.value}%` : `Rp ${promo.value.toLocaleString()}`}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={promo.status === "active" ? "default" : "secondary"}>{promo.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {promo.usage_count} / {promo.usage_limit ?? "∞"}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    {promo.starts_at && new Date(promo.starts_at).toLocaleDateString("id-ID")}
-                    {promo.ends_at && ` - ${new Date(promo.ends_at).toLocaleDateString("id-ID")}`}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            ))}
+          </TableBody>
+        </Table>
+      </DataTable>
     </div>
   )
 }

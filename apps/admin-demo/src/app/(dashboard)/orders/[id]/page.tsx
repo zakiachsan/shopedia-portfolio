@@ -1,22 +1,17 @@
 import { notFound } from "next/navigation"
 import { getOrderById } from "@shopedia/dummy-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { ArrowLeft, Printer, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
   const { orders } = require("@shopedia/dummy-data")
   return orders.map((o: any) => ({ id: o.id }))
-}
-
-const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  completed: "default",
-  processing: "secondary",
-  shipped: "secondary",
-  pending: "outline",
-  canceled: "destructive",
 }
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
@@ -25,14 +20,32 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold tracking-tight">Order #{order.display_id}</h1>
-          <Badge variant={statusVariant[order.status] ?? "secondary"}>{order.status}</Badge>
-        </div>
-        <Link href="/orders">
-          <Button variant="outline">Back</Button>
-        </Link>
+      <PageHeader
+        title={`Order #${order.display_id}`}
+        actions={
+          <>
+            <Button variant="ghost" size="sm" className="gap-1.5">
+              <HelpCircle className="h-4 w-4" />
+              Help
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Printer className="h-4 w-4" />
+              Print
+            </Button>
+            <Link href="/orders/">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+          </>
+        }
+      />
+
+      <div className="flex items-center gap-3">
+        <StatusBadge status={order.status} />
+        <Badge variant="outline" className="capitalize">{order.payment_status}</Badge>
+        <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleString("id-ID")}</span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -57,7 +70,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                       <TableCell>
                         <div className="flex items-center gap-3">
                           {item.thumbnail && (
-                            <img src={item.thumbnail} alt={item.title} className="h-10 w-10 rounded-md object-cover" />
+                            <img src={item.thumbnail} alt={item.title} className="h-10 w-10 rounded-md object-cover border" />
                           )}
                           <div>
                             <div className="font-medium text-sm">{item.title}</div>
@@ -109,6 +122,15 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
           <Card>
             <CardHeader>
+              <CardTitle>Customer</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm space-y-1">
+              <p className="font-medium">{order.email}</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Shipping Address</CardTitle>
             </CardHeader>
             <CardContent className="text-sm space-y-1">
@@ -116,7 +138,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               <p>{order.shipping_address.address_1}</p>
               {order.shipping_address.address_2 && <p>{order.shipping_address.address_2}</p>}
               <p>{order.shipping_address.city}, {order.shipping_address.province} {order.shipping_address.postal_code}</p>
-              <p>{order.shipping_address.phone}</p>
+              <p className="text-muted-foreground">{order.shipping_address.phone}</p>
             </CardContent>
           </Card>
         </div>
