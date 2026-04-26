@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react"
 
 interface AuthContextType {
   isAuthenticated: boolean
@@ -28,17 +28,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const login = () => {
+  const login = useCallback(() => {
     localStorage.setItem("shopedia_demo_auth", "true")
     setIsAuthenticated(true)
     setUser({ email: "admin@shopedia.com", name: "Admin Demo" })
-  }
+  }, [])
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("shopedia_demo_auth")
     setIsAuthenticated(false)
     setUser(null)
-  }
+  }, [])
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>

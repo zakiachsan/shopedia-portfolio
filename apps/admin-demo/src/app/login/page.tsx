@@ -1,14 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth"
 
 export default function LoginPage() {
   const router = useRouter()
   const { login } = useAuth()
+  const didRun = useRef(false)
 
   useEffect(() => {
+    if (didRun.current) return
+    didRun.current = true
     login()
     router.push("/")
   }, [login, router])
