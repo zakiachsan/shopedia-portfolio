@@ -44,7 +44,7 @@ export function Topbar() {
 
         <div className="flex items-center gap-2 pl-3 border-l">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="" />
+            <AvatarImage />
             <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
               AD
             </AvatarFallback>

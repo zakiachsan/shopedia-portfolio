@@ -98,7 +98,7 @@ export function Sidebar() {
       <div className="px-4 py-3 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9">
-            <AvatarImage src="" />
+            <AvatarImage />
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
               {user?.name?.split(" ").map((n) => n[0]).join("") ?? "AD"}
             </AvatarFallback>
