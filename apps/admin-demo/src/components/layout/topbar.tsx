@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Search, Bell, ExternalLink } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { Bell, ExternalLink } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { STOREFRONT_URL } from "@/lib/config"
 import { useAuth } from "@/lib/auth"
@@ -12,18 +11,7 @@ export function Topbar() {
 
   return (
     <header className="h-14 border-b bg-white flex items-center justify-between px-6 sticky top-0 z-30">
-      {/* Left: Search */}
-      <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search..."
-            className="pl-9 h-9 bg-muted border-0 text-sm w-full max-w-sm"
-            disabled
-          />
-        </div>
-      </div>
+      <div className="flex-1" />
 
       {/* Right: Actions */}
       <div className="flex items-center gap-3">

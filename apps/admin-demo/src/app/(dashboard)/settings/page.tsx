@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { Save } from "lucide-react"
 
 export default function SettingsPage() {
@@ -11,10 +12,12 @@ export default function SettingsPage() {
       <PageHeader
         title="Settings"
         actions={
-          <Button variant="primary" size="sm" className="gap-1.5">
-            <Save className="h-4 w-4" />
-            Save Changes
-          </Button>
+          <PlaceholderDialog title="Save Changes">
+            <Button variant="primary" size="sm" className="gap-1.5">
+              <Save className="h-4 w-4" />
+              Save Changes
+            </Button>
+          </PlaceholderDialog>
         }
       />
 

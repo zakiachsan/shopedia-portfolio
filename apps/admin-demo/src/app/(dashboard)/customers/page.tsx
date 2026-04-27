@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/layout/data-table"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { Plus, HelpCircle } from "lucide-react"
 
 export default function CustomersPage() {
@@ -14,14 +15,18 @@ export default function CustomersPage() {
         title="Customers"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              Add Customer
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Add Customer">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add Customer
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />

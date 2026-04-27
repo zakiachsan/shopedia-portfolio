@@ -1,9 +1,11 @@
+import Link from "next/link"
 import { promotions } from "@shopedia/dummy-data"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/layout/data-table"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { Plus, HelpCircle } from "lucide-react"
 
 export default function PromotionsPage() {
@@ -13,14 +15,18 @@ export default function PromotionsPage() {
         title="Promotions"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              Add Promotion
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Add Promotion">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add Promotion
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />
@@ -54,8 +60,10 @@ export default function PromotionsPage() {
                   <input type="checkbox" className="rounded border-gray-300" disabled />
                 </TableCell>
                 <TableCell>
-                  <div className="font-mono text-sm font-medium">{promo.code}</div>
-                  <div className="text-xs text-muted-foreground">{promo.is_automatic ? "Automatic" : "Manual"}</div>
+                  <Link href={`/promotions/${promo.id}/`} className="block group">
+                    <div className="font-mono text-sm font-medium group-hover:text-primary transition-colors">{promo.code}</div>
+                    <div className="text-xs text-muted-foreground">{promo.is_automatic ? "Automatic" : "Manual"}</div>
+                  </Link>
                 </TableCell>
                 <TableCell className="capitalize text-sm">{promo.type}</TableCell>
                 <TableCell className="text-right font-mono text-sm">

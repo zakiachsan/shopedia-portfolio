@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { ArrowLeft, Pencil, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
@@ -14,8 +15,9 @@ export function generateStaticParams() {
   return products.map((p: any) => ({ id: p.id }))
 }
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = getProductById(params.id)
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const product = getProductById(id)
   if (!product) return notFound()
 
   return (
@@ -25,14 +27,18 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         subtitle={product.handle}
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Edit Product">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            </PlaceholderDialog>
             <Link href="/products/">
               <Button variant="outline" size="sm" className="gap-1.5">
                 <ArrowLeft className="h-4 w-4" />

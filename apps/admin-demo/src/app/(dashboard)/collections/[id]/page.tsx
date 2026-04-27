@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import Link from "next/link"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { ArrowLeft, Pencil, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
@@ -11,8 +12,9 @@ export function generateStaticParams() {
   return collections.map((c: any) => ({ id: c.id }))
 }
 
-export default function CollectionDetailPage({ params }: { params: { id: string } }) {
-  const collection = collections.find((c) => c.id === params.id)
+export default async function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const collection = collections.find((c) => c.id === id)
   if (!collection) return notFound()
 
   const collectionProducts = products.filter((p) => collection.product_ids.includes(p.id))
@@ -24,14 +26,18 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         subtitle={collection.handle}
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Edit Collection">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            </PlaceholderDialog>
             <Link href="/collections/">
               <Button variant="outline" size="sm" className="gap-1.5">
                 <ArrowLeft className="h-4 w-4" />

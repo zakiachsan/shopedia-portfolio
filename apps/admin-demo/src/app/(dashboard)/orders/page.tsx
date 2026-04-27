@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/layout/data-table"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { HelpCircle, UserPlus } from "lucide-react"
 
 export default function OrdersPage() {
@@ -15,15 +16,21 @@ export default function OrdersPage() {
         title="Orders"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="outline" size="sm">Order Statistics</Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <UserPlus className="h-4 w-4" />
-              New Customer
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Order Statistics">
+              <Button variant="outline" size="sm">Order Statistics</Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="New Customer">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <UserPlus className="h-4 w-4" />
+                New Customer
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />
@@ -41,7 +48,6 @@ export default function OrdersPage() {
               <TableHead className="w-10">
                 <input type="checkbox" className="rounded border-gray-300" disabled />
               </TableHead>
-              <TableHead>ID</TableHead>
               <TableHead>Reference</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead>Status</TableHead>
@@ -52,19 +58,24 @@ export default function OrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order, idx) => (
+            {orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell>
                   <input type="checkbox" className="rounded border-gray-300" disabled />
                 </TableCell>
                 <TableCell>
-                  <Link href={`/orders/${order.id}/`} className="font-medium hover:text-primary transition-colors">
-                    {idx + 1}
+                  <Link href={`/orders/${order.id}/`} className="font-mono text-xs font-medium hover:text-primary transition-colors">
+                    {order.display_id}
                   </Link>
                 </TableCell>
-                <TableCell className="font-mono text-xs">{order.display_id}</TableCell>
                 <TableCell>
-                  <div className="text-sm">{order.email}</div>
+                  {order.customer_id ? (
+                    <Link href={`/customers/${order.customer_id}/`} className="text-sm hover:text-primary transition-colors">
+                      {order.email}
+                    </Link>
+                  ) : (
+                    <div className="text-sm">{order.email}</div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={order.status} />

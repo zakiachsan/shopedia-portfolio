@@ -1,24 +1,21 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
+import { DateRangePicker } from "@/components/ui/date-range-picker"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { StatusBadge } from "@/components/ui/status-badge"
 import {
   products,
   orders,
   customers,
-  promotions,
   getTotalRevenue,
   getTotalStockValue,
   getLowStockItems,
   wmsTransactions,
 } from "@shopedia/dummy-data"
 import {
-  ArrowDownLeft,
-  ArrowUpRight,
-  ClipboardCheck,
   Boxes,
-  History,
   Package,
   ShoppingCart,
   Users,
@@ -41,17 +38,9 @@ export default function DashboardPage() {
     { title: "Stok Rendah", value: lowStock.length.toString(), icon: AlertTriangle, color: "text-red-600" },
   ]
 
-  const quickLinks = [
-    { href: "/wms/inbound/", label: "Inbound", icon: ArrowDownLeft, color: "text-green-600", bg: "bg-green-50" },
-    { href: "/wms/outbound/", label: "Outbound", icon: ArrowUpRight, color: "text-red-600", bg: "bg-red-50" },
-    { href: "/wms/opname/", label: "Stock Opname", icon: ClipboardCheck, color: "text-amber-600", bg: "bg-amber-50" },
-    { href: "/wms/stock/", label: "Stock Levels", icon: Boxes, color: "text-blue-600", bg: "bg-blue-50" },
-    { href: "/wms/transactions/", label: "History", icon: History, color: "text-purple-600", bg: "bg-purple-50" },
-  ]
-
   return (
     <div className="space-y-6">
-      <PageHeader title="Dashboard" />
+      <PageHeader title="Dashboard" actions={<DateRangePicker />} />
 
       {/* Stats */}
       <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
@@ -68,24 +57,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Quick Links */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-        {quickLinks.map((link) => (
-          <Link key={link.href} href={link.href}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4" style={{ borderLeftColor: "transparent" }}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className={`h-9 w-9 rounded-lg ${link.bg} flex items-center justify-center`}>
-                  <link.icon className={`h-4 w-4 ${link.color}`} />
-                </div>
-                <span className="font-medium text-sm">{link.label}</span>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Orders */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle>Order Terbaru</CardTitle>
@@ -94,26 +66,43 @@ export default function DashboardPage() {
             </Link>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {orders.slice(0, 5).map((order) => (
-                <div key={order.id} className="flex items-center justify-between rounded-lg border p-3 text-sm hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Badge variant={order.status === "completed" ? "green" : order.status === "canceled" ? "red" : "orange"}>
-                      #{order.display_id}
-                    </Badge>
-                    <span className="text-muted-foreground truncate">{order.email}</span>
-                  </div>
-                  <div className="flex items-center gap-4 shrink-0">
-                    <span className="font-medium">Rp {order.total.toLocaleString()}</span>
-                    <span className="text-muted-foreground text-xs whitespace-nowrap">{new Date(order.created_at).toLocaleDateString("id-ID")}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Reference</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {orders.slice(0, 5).map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell>
+                      <Link href={`/orders/${order.id}/`} className="font-mono text-xs font-medium hover:text-primary transition-colors">
+                        #{order.display_id}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      {order.customer_id ? (
+                        <Link href={`/customers/${order.customer_id}/`} className="text-muted-foreground hover:text-primary transition-colors">
+                          {order.email}
+                        </Link>
+                      ) : (
+                        <span className="text-muted-foreground">{order.email}</span>
+                      )}
+                    </TableCell>
+                    <TableCell><StatusBadge status={order.status} /></TableCell>
+                    <TableCell className="text-right font-mono text-sm">Rp {order.total.toLocaleString()}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{new Date(order.created_at).toLocaleDateString("id-ID")}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
-        {/* Recent WMS */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle>Aktivitas WMS Terbaru</CardTitle>
@@ -122,27 +111,31 @@ export default function DashboardPage() {
             </Link>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {recentTx.map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between rounded-lg border p-3 text-sm hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Badge variant={tx.type === "inbound" ? "green" : tx.type === "outbound" ? "red" : "blue"}>
-                      {tx.type}
-                    </Badge>
-                    <span className="text-muted-foreground truncate">{tx.reference_no ?? tx.inventory_item_id.slice(0, 12)}</span>
-                  </div>
-                  <div className="flex items-center gap-4 shrink-0">
-                    <span className="text-sm">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Reference</TableHead>
+                  <TableHead className="text-right">Qty Change</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentTx.map((tx) => (
+                  <TableRow key={tx.id}>
+                    <TableCell><StatusBadge status={tx.type} /></TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{tx.reference_no ?? tx.inventory_item_id.slice(0, 12)}</TableCell>
+                    <TableCell className="text-right text-sm">
                       {tx.quantity_before} → {tx.quantity_after}
                       <span className={tx.delta > 0 ? "text-green-600 ml-1" : tx.delta < 0 ? "text-red-600 ml-1" : "text-muted-foreground ml-1"}>
                         ({tx.delta > 0 ? "+" : ""}{tx.delta})
                       </span>
-                    </span>
-                    <span className="text-muted-foreground text-xs whitespace-nowrap">{new Date(tx.created_at).toLocaleDateString("id-ID")}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{new Date(tx.created_at).toLocaleDateString("id-ID")}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>

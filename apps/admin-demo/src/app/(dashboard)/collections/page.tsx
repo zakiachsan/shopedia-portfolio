@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/layout/data-table"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { Plus, HelpCircle } from "lucide-react"
 
 export default function CollectionsPage() {
@@ -13,14 +14,18 @@ export default function CollectionsPage() {
         title="Collections"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              Add Collection
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Add Collection">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add Collection
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />

@@ -9,7 +9,6 @@ import {
   ShoppingCart,
   Users,
   Tag,
-  FolderOpen,
   Settings,
   Warehouse,
   ChevronDown,
@@ -17,12 +16,10 @@ import {
   LogOut,
   ExternalLink,
   Search,
-  ChevronUp,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { cn } from "@/lib/utils"
 import { STOREFRONT_URL } from "@/lib/config"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface NavItem {
   href: string
@@ -73,7 +70,7 @@ function isActive(pathname: string, href: string, children?: { href: string }[])
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { logout, user } = useAuth()
+  const { logout } = useAuth()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     catalog: pathname.startsWith("/products") || pathname.startsWith("/collections") || pathname.startsWith("/categories"),
     warehouse: pathname.startsWith("/wms"),
@@ -92,23 +89,6 @@ export function Sidebar() {
             <span className="block text-[10px] text-muted-foreground -mt-0.5">Admin Panel</span>
           </div>
         </Link>
-      </div>
-
-      {/* User Profile */}
-      <div className="px-4 py-3 border-b border-sidebar-border">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9">
-            <AvatarImage />
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-              {user?.name?.split(" ").map((n) => n[0]).join("") ?? "AD"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name ?? "Admin Demo"}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email ?? "admin@shopedia.com"}</p>
-          </div>
-          <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
-        </div>
       </div>
 
       {/* Sidebar Search */}
@@ -134,25 +114,36 @@ export function Sidebar() {
 
           return (
             <div key={item.label}>
-              <button
-                onClick={() => {
-                  if (hasChildren) {
+              {hasChildren ? (
+                <button
+                  onClick={() => {
                     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))
-                  }
-                }}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-                  active
-                    ? "bg-[#e5e7eb] text-foreground font-medium"
-                    : "text-sidebar-foreground hover:bg-[#e5e7eb]/60"
-                )}
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                <span className="flex-1 text-left">{item.label}</span>
-                {hasChildren && (
-                  isExpanded ? <ChevronDown className="h-3.5 w-3.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0" />
-                )}
-              </button>
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                    active
+                      ? "bg-[#e5e7eb] text-foreground font-medium"
+                      : "text-sidebar-foreground hover:bg-[#e5e7eb]/60"
+                  )}
+                >
+                  <item.icon className="h-4 w-4 shrink-0" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  {isExpanded ? <ChevronDown className="h-3.5 w-3.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0" />}
+                </button>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                    active
+                      ? "bg-[#e5e7eb] text-foreground font-medium"
+                      : "text-sidebar-foreground hover:bg-[#e5e7eb]/60"
+                  )}
+                >
+                  <item.icon className="h-4 w-4 shrink-0" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                </Link>
+              )}
               {hasChildren && isExpanded && (
                 <div className="ml-6 mt-0.5 space-y-0.5">
                   {item.children!.map((child) => {
@@ -173,9 +164,6 @@ export function Sidebar() {
                     )
                   })}
                 </div>
-              )}
-              {!hasChildren && (
-                <Link href={item.href} className="hidden" />
               )}
             </div>
           )

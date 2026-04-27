@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { ArrowLeft, Pencil, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
@@ -14,10 +15,11 @@ export function generateStaticParams() {
   return customers.map((c: any) => ({ id: c.id }))
 }
 
-export default function CustomerDetailPage({ params }: { params: { id: string } }) {
-  const customer = getCustomerById(params.id)
+export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const customer = getCustomerById(id)
   if (!customer) return notFound()
-  const customerOrders = getOrdersByCustomer(params.id)
+  const customerOrders = getOrdersByCustomer(id)
 
   return (
     <div className="space-y-6">
@@ -26,14 +28,18 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
         subtitle={customer.email}
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Edit Customer">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            </PlaceholderDialog>
             <Link href="/customers/">
               <Button variant="outline" size="sm" className="gap-1.5">
                 <ArrowLeft className="h-4 w-4" />

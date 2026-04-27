@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { ArrowLeft, Printer, HelpCircle } from "lucide-react"
 
 export function generateStaticParams() {
@@ -14,8 +15,9 @@ export function generateStaticParams() {
   return orders.map((o: any) => ({ id: o.id }))
 }
 
-export default function OrderDetailPage({ params }: { params: { id: string } }) {
-  const order = getOrderById(params.id)
+export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const order = getOrderById(id)
   if (!order) return notFound()
 
   return (
@@ -24,14 +26,18 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         title={`Order #${order.display_id}`}
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Printer className="h-4 w-4" />
-              Print
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Print Order">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Printer className="h-4 w-4" />
+                Print
+              </Button>
+            </PlaceholderDialog>
             <Link href="/orders/">
               <Button variant="outline" size="sm" className="gap-1.5">
                 <ArrowLeft className="h-4 w-4" />

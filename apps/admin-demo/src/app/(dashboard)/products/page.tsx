@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/layout/data-table"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { Plus, HelpCircle } from "lucide-react"
 
 export default function ProductsPage() {
@@ -14,14 +15,18 @@ export default function ProductsPage() {
         title="Products"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              Add Product
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Add Product">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add Product
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />

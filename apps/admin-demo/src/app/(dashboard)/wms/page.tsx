@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import {
   products,
-  stockLevels,
   wmsTransactions,
   getTotalStockValue,
   getLowStockItems,
@@ -13,9 +12,7 @@ import {
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  ClipboardCheck,
   Boxes,
-  History,
   Package,
   AlertTriangle,
 } from "lucide-react"
@@ -31,14 +28,6 @@ export default function WmsPage() {
     { title: "Inbound Today", value: "0", icon: ArrowDownLeft, color: "text-emerald-600", bg: "bg-emerald-50" },
     { title: "Outbound Today", value: "0", icon: ArrowUpRight, color: "text-red-600", bg: "bg-red-50" },
     { title: "Low Stock", value: lowStock.length.toString(), icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-50" },
-  ]
-
-  const quickLinks = [
-    { href: "/wms/inbound/", label: "Inbound", icon: ArrowDownLeft, color: "text-green-600", bg: "bg-green-50" },
-    { href: "/wms/outbound/", label: "Outbound", icon: ArrowUpRight, color: "text-red-600", bg: "bg-red-50" },
-    { href: "/wms/opname/", label: "Stock Opname", icon: ClipboardCheck, color: "text-amber-600", bg: "bg-amber-50" },
-    { href: "/wms/stock/", label: "Stock Levels", icon: Boxes, color: "text-blue-600", bg: "bg-blue-50" },
-    { href: "/wms/transactions/", label: "History", icon: History, color: "text-purple-600", bg: "bg-purple-50" },
   ]
 
   return (
@@ -58,21 +47,6 @@ export default function WmsPage() {
               <div className="text-xl font-bold">{stat.value}</div>
             </CardContent>
           </Card>
-        ))}
-      </div>
-
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-        {quickLinks.map((link) => (
-          <Link key={link.href} href={link.href}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className={`h-9 w-9 rounded-lg ${link.bg} flex items-center justify-center`}>
-                  <link.icon className={`h-4 w-4 ${link.color}`} />
-                </div>
-                <span className="font-medium text-sm">{link.label}</span>
-              </CardContent>
-            </Card>
-          </Link>
         ))}
       </div>
 

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/layout/data-table"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { ArrowDownLeft, Plus, HelpCircle } from "lucide-react"
 
 export default function InboundPage() {
@@ -18,14 +19,18 @@ export default function InboundPage() {
         title="Inbound"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              Record Inbound
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Record Inbound">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
+                Record Inbound
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />

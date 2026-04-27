@@ -4,6 +4,7 @@ import { categories } from "@shopedia/dummy-data"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
+import { PlaceholderDialog } from "@/components/ui/placeholder-dialog"
 import { FolderOpen, Folder, ChevronRight, Plus, HelpCircle } from "lucide-react"
 import { useState } from "react"
 
@@ -16,14 +17,18 @@ export default function CategoriesPage() {
         title="Categories"
         actions={
           <>
-            <Button variant="ghost" size="sm" className="gap-1.5">
-              <HelpCircle className="h-4 w-4" />
-              Help
-            </Button>
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              Add Category
-            </Button>
+            <PlaceholderDialog title="Help">
+              <Button variant="ghost" size="sm" className="gap-1.5">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Button>
+            </PlaceholderDialog>
+            <PlaceholderDialog title="Add Category">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add Category
+              </Button>
+            </PlaceholderDialog>
           </>
         }
       />
