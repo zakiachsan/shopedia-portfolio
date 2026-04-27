@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation"
-import { getProductByHandle } from "@shopedia/dummy-data"
+import { products, getProductByHandle } from "@shopedia/dummy-data"
 import { ProductDetail } from "./product-detail"
 
 export function generateStaticParams() {
-  const { products } = require("@shopedia/dummy-data")
-  return products.map((p: any) => ({ handle: p.handle }))
+  return products.map((p) => ({ handle: p.handle }))
 }
 
-export default function ProductPage({ params }: { params: { handle: string } }) {
-  const product = getProductByHandle(params.handle)
+export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = await params
+  const product = getProductByHandle(handle)
   if (!product) return notFound()
 
   return (
