@@ -29,7 +29,7 @@ export function DataTable({
   return (
     <div className="rounded-lg border bg-card shadow-sm">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-border/60">
         <div className="flex items-center gap-4">
           {title && <span className="text-sm font-semibold">{title}</span>}
           {count !== undefined && (
@@ -43,12 +43,12 @@ export function DataTable({
               <span className="hidden sm:inline">Filters</span>
             </Button>
           )}
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-none">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               type="text"
               placeholder={searchPlaceholder}
-              className="pl-8 h-8 w-48 text-sm"
+              className="pl-8 h-8 w-full sm:w-48 text-sm"
               disabled
             />
           </div>

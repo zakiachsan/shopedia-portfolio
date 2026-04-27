@@ -16,6 +16,7 @@ import {
   LogOut,
   ExternalLink,
   Search,
+  X,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { cn } from "@/lib/utils"
@@ -68,7 +69,7 @@ function isActive(pathname: string, href: string, children?: { href: string }[])
   return false
 }
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname()
   const { logout } = useAuth()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
@@ -76,11 +77,11 @@ export function Sidebar() {
     warehouse: pathname.startsWith("/wms"),
   })
 
-  return (
-    <aside className="w-64 min-h-screen bg-sidebar-background border-r border-sidebar-border flex flex-col shrink-0">
+  const sidebarContent = (
+    <>
       {/* Logo */}
       <div className="px-4 py-3 border-b border-sidebar-border">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
           <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-sm">
             <span className="text-primary-foreground font-bold text-sm">S</span>
           </div>
@@ -133,6 +134,7 @@ export function Sidebar() {
               ) : (
                 <Link
                   href={item.href}
+                  onClick={onClose}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
                     active
@@ -152,6 +154,7 @@ export function Sidebar() {
                       <Link
                         key={child.href}
                         href={child.href}
+                        onClick={onClose}
                         className={cn(
                           "block px-3 py-1.5 rounded-md text-sm transition-colors",
                           childActive
@@ -200,6 +203,36 @@ export function Sidebar() {
           <span>Logout</span>
         </button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop: static sidebar */}
+      <aside className="hidden lg:flex w-64 min-h-screen bg-sidebar-background border-r border-sidebar-border flex-col shrink-0">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile: off-canvas overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+          {/* Sidebar panel */}
+          <aside className="relative w-72 max-w-[85vw] h-full bg-sidebar-background border-r border-sidebar-border flex flex-col overflow-y-auto animate-in slide-in-from-left">
+            {/* Close button */}
+            <div className="absolute top-3 right-3">
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-md hover:bg-[#e5e7eb] transition-colors"
+              >
+                <X className="h-5 w-5 text-muted-foreground" />
+              </button>
+            </div>
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   )
 }
